@@ -702,6 +702,22 @@ const myRecord = z.partialRecord(z.enum(["a", "b", "c"]), z.number());
 // { a?: number; b?: number; c?: number; }
 ```
 
+### preserves `undefined` values
+
+In Zod 3, `z.record()` would filter out keys with `undefined` values during parsing, while `z.object()` would preserve them. This inconsistency has been fixed in Zod 4.
+
+```ts
+// Zod 3
+z.object({ foo: z.any() }).parse({ foo: undefined }); // { foo: undefined }
+z.record(z.string(), z.any()).parse({ foo: undefined }); // {} (filtered out)
+
+// Zod 4
+z.object({ foo: z.any() }).parse({ foo: undefined }); // { foo: undefined }
+z.record(z.string(), z.any()).parse({ foo: undefined }); // { foo: undefined } (preserved)
+```
+
+This change makes the behavior of `z.record()` and `z.object()` consistent when handling `undefined` values.
+
 ## `z.intersection()`
 
 
